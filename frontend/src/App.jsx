@@ -1,31 +1,74 @@
 import { useState } from 'react'
+import humuLogo from './assets/humu.png'
 
 const services = [
   {
-    title: 'Mantencion integral',
+    title: 'Renovación de plantas y flores de temporada',
     description:
-      'Visitas programadas para jardines residenciales, condominios y empresas.',
-    tag: 'Mantencion',
+      'Sustitución de ejemplares y flores para mantener tu jardín vivo todo el año.',
+    tag: 'Jardinería',
     icon: LeafIcon,
   },
   {
-    title: 'Diseno y construccion',
+    title: 'Sistemas de riego automático',
     description:
-      'Paisajismo, nuevas areas verdes y soluciones a medida para cada espacio.',
-    tag: 'Paisajismo',
+      'Diseño e instalación de riego automático para áreas verdes eficientes.',
+    tag: 'Riego',
+    icon: DropIcon,
+  },
+  {
+    title: 'Reparación de riego',
+    description:
+      'Diagnóstico y corrección de fugas, presión y programación de controladores.',
+    tag: 'Riego',
+    icon: DropIcon,
+  },
+  {
+    title: 'Fumigación',
+    description:
+      'Control de plagas en césped, árboles y arbustos con productos certificados.',
+    tag: 'Sanidad vegetal',
+    icon: LeafIcon,
+  },
+  {
+    title: 'Resiembra de pasto',
+    description:
+      'Recuperación de prados con resiembra, nivelación y cuidados iniciales.',
+    tag: 'Césped',
+    icon: LeafIcon,
+  },
+  {
+    title: 'Instalación de pasto en palmeta',
+    description:
+      'Colocación de palmetas/tepes para áreas verdes inmediatas y uniformes.',
+    tag: 'Césped',
+    icon: LeafIcon,
+  },
+  {
+    title: 'Poda y tala de árboles',
+    description:
+      'Poda formativa, sanitaria y tala segura con manejo responsable de residuos.',
+    tag: 'Árboles',
     icon: PlanIcon,
   },
   {
-    title: 'Riego eficiente',
+    title: 'Fertilización',
     description:
-      'Instalacion, mantencion y optimizacion de sistemas de riego.',
-    tag: 'Riego',
-    icon: DropIcon,
+      'Planes de nutrición para césped, arbustos y flores según la temporada.',
+    tag: 'Nutrición',
+    icon: LeafIcon,
+  },
+  {
+    title: 'Seteo de arbustos',
+    description:
+      'Formado y orden de arbustos y setos para bordes y macizos prolijos.',
+    tag: 'Jardinería',
+    icon: LeafIcon,
   },
 ]
 
 const stats = [
-  { value: '12+', label: 'Anos de experiencia' },
+  { value: '12+', label: 'Años de experiencia' },
   { value: '80+', label: 'Proyectos activos' },
   { value: '100%', label: 'Equipo en terreno' },
 ]
@@ -33,13 +76,27 @@ const stats = [
 const identityPoints = [
   'Compromiso real con tus espacios verdes.',
   'Responsabilidad y orden en cada visita.',
-  'Calidad visible en cada detalle del jardin.',
+  'Calidad visible en cada detalle del jardín.',
 ]
+
+const pricingDetails = {
+  cutPrice: 'Valor por corte $15.000 (hasta 300 m²)',
+  monthlyPrice: 'Valor mensual $50.000 (una vez por semana)',
+  items: [
+    'Incluye movimiento de tierra (desmalezado zona de jardín) y hechuras de tazas árboles o arbustos.',
+    'Mantención sistema de riego (incluye solo mano de obra. Materiales por cuenta del cliente).',
+    'Podas o talas (plantas y arbustos) incluye dar forma a los arbustos y plantas.',
+    'Los trabajos se dejan con todos los sectores limpios y aseados.',
+    'Fertilización (solo mano de obra. Materiales por cuenta del cliente).',
+  ],
+  offerTitle: 'Oferta!!',
+  offerLines: ['Primera visita al 50%', 'Cotizaciones de paisajismos (cero costo)'],
+}
 
 const socialLinks = [
   {
     label: 'Instagram',
-    href: 'https://www.instagram.com/',
+    href: 'https://www.instagram.com/humusgardencl/',
     icon: InstagramIcon,
   },
   {
@@ -49,12 +106,12 @@ const socialLinks = [
   },
   {
     label: 'YouTube',
-    href: 'https://www.youtube.com/',
+    href: 'https://www.youtube.com/@HumusGardencl',
     icon: YoutubeIcon,
   },
 ]
 
-const videoUrl = 'https://www.youtube.com/embed/aqz-KE-bpKQ'
+const videoUrl = 'https://www.youtube.com/embed/Omj5v0dGsLE'
 
 const primaryButtonClass =
   'inline-flex items-center justify-center rounded-full bg-[color:var(--hg-olive)] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_40px_-22px_rgba(74,107,76,0.9)] transition hover:-translate-y-0.5 hover:bg-[color:var(--hg-forest)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--hg-olive)]'
@@ -77,6 +134,7 @@ function App() {
     setFormStatus({ state: 'loading', message: 'Enviando...' })
 
     const formData = new FormData(event.currentTarget)
+    const formElement = event.currentTarget
     const payload = Object.fromEntries(formData.entries())
 
     try {
@@ -87,18 +145,22 @@ function App() {
       })
 
       if (!response.ok) {
-        throw new Error('Request failed')
+        throw new Error(`Error ${response.status}`)
       }
 
       setFormStatus({
         state: 'success',
         message: 'Gracias. Te responderemos en 24 horas habiles.',
       })
-      event.currentTarget.reset()
+      formElement?.reset()
     } catch (error) {
+      console.error('Error enviando formulario de contacto:', error)
       setFormStatus({
         state: 'error',
-        message: 'No pudimos enviar el formulario. Intenta mas tarde.',
+        message:
+          error?.message === 'Failed to fetch'
+            ? 'No pudimos contactar al servidor. Revisa tu conexion.'
+            : 'No pudimos enviar el formulario. Intenta mas tarde.',
       })
     }
   }
@@ -122,7 +184,11 @@ function App() {
         <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 lg:px-10">
           <div className="flex items-center gap-3">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[color:var(--hg-moss)]">
-              <LeafMark className="h-7 w-7 text-[color:var(--hg-olive)]" />
+              <img
+                src={humuLogo}
+                alt="HumusGarden"
+                className="h-9 w-9 object-contain"
+              />
             </div>
             <div>
               <p className="font-display text-lg font-semibold tracking-tight text-[color:var(--hg-forest)]">
@@ -139,6 +205,9 @@ function App() {
             </a>
             <a className="transition hover:text-[color:var(--hg-olive)]" href="#servicios">
               Nuestros servicios
+            </a>
+            <a className="transition hover:text-[color:var(--hg-olive)]" href="#precios">
+              Precios
             </a>
             <a className="transition hover:text-[color:var(--hg-olive)]" href="#contacto">
               Contacto
@@ -162,7 +231,7 @@ function App() {
                 Santiago, Chile
               </div>
               <h1 className="font-display text-4xl leading-tight text-[color:var(--hg-forest)] sm:text-5xl lg:text-6xl animate-fade-up">
-                Diseno, mantencion y construccion de areas verdes con
+                Diseño, mantención y construcción de áreas verdes con
                 personalidad.
               </h1>
               <p className="text-lg text-[color:var(--hg-forest)]/70 animate-fade-up">
@@ -200,10 +269,10 @@ function App() {
               <div className="relative overflow-hidden rounded-[32px] border border-white/80 bg-white/70 p-6 shadow-2xl backdrop-blur">
                 <div className="rounded-3xl bg-[color:var(--hg-moss)]/40 p-6">
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--hg-olive)]">
-                    Plan de mantencion
+                    Plan de mantención
                   </p>
                   <p className="mt-3 font-display text-2xl text-[color:var(--hg-forest)]">
-                    Un jardin saludable todo el ano.
+                    Un jardín saludable todo el año.
                   </p>
                   <p className="mt-3 text-sm text-[color:var(--hg-forest)]/70">
                     Programas flexibles, equipo en terreno y seguimiento
@@ -222,7 +291,7 @@ function App() {
                     </li>
                     <li className="flex items-center gap-3">
                       <span className="h-2 w-2 rounded-full bg-[color:var(--hg-olive)]" />
-                      Mantencion de arboles y setos.
+                      Mantención de árboles y setos.
                     </li>
                     <li className="flex items-center gap-3">
                       <span className="h-2 w-2 rounded-full bg-[color:var(--hg-olive)]" />
@@ -233,13 +302,13 @@ function App() {
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--hg-olive)]">
-                    Diseno sustentable
+                    Diseño sustentable
                   </div>
                   <div className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--hg-olive)]">
                     Equipo certificado
                   </div>
                   <div className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--hg-olive)]">
-                    Jardin en movimiento
+                    Jardín en movimiento
                   </div>
                   <div className="rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--hg-olive)]">
                     Visitas programadas
@@ -260,11 +329,11 @@ function App() {
                 Nuestros servicios
               </p>
               <h2 className="mt-3 font-display text-3xl text-[color:var(--hg-forest)] sm:text-4xl">
-                Soluciones completas para areas verdes.
+                Soluciones completas para áreas verdes.
               </h2>
               <p className="mt-4 max-w-2xl text-sm text-[color:var(--hg-forest)]/70">
                 Nos adaptamos al ritmo de tu condominio o empresa con planes de
-                mantencion y proyectos a medida.
+                mantención y proyectos a medida.
               </p>
             </div>
             <a className={secondaryButtonClass} href="#contacto">
@@ -324,15 +393,15 @@ function App() {
 
             <div className="rounded-[32px] border border-white/80 bg-white/80 p-8 shadow-xl">
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hg-olive)]">
-                Lo ultimo
+                Lo último
               </p>
               <h3 className="mt-4 font-display text-2xl text-[color:var(--hg-forest)]">
                 Nuestra identidad
               </h3>
               <p className="mt-4 text-sm text-[color:var(--hg-forest)]/70">
-                Somos HumusGarden, un equipo de mantencion y construccion de
-                areas verdes enfocado en compromiso, responsabilidad y calidad
-                del trabajo. Nos encanta dar nueva vida a tu jardin y cumplir
+                Somos HumusGarden, un equipo de mantención y construcción de
+                áreas verdes enfocado en compromiso, responsabilidad y calidad
+                del trabajo. Nos encanta dar nueva vida a tu jardín y cumplir
                 tus ideas.
               </p>
               <ul className="mt-6 space-y-4 text-sm text-[color:var(--hg-forest)]/80">
@@ -350,10 +419,10 @@ function App() {
             <div className="flex flex-wrap items-center justify-between gap-6">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hg-olive)]">
-                  Encuentranos en
+                  Encuéntranos en
                 </p>
                 <p className="mt-2 text-sm text-[color:var(--hg-forest)]/70">
-                  Siguenos para ver proyectos, consejos y novedades.
+                Síguenos para ver proyectos, consejos y novedades.
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -379,6 +448,69 @@ function App() {
         </section>
 
         <section
+          id="precios"
+          className="mx-auto w-full max-w-6xl px-6 py-14 lg:px-10"
+        >
+          <div className="rounded-[28px] border border-white/80 bg-white/70 p-6 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hg-olive)]">
+                  Precios
+                </p>
+                <h3 className="mt-2 font-display text-2xl text-[color:var(--hg-forest)]">
+                  Plan de corte y mantención
+                </h3>
+                <p className="mt-2 text-sm text-[color:var(--hg-forest)]/70">
+                  Valores referenciales para jardines hasta 300 m².
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-3 text-sm font-semibold text-[color:var(--hg-forest)]">
+                <span className="rounded-full bg-[color:var(--hg-moss)] px-4 py-2 shadow-sm">
+                  {pricingDetails.cutPrice}
+                </span>
+                <span className="rounded-full bg-[color:var(--hg-moss)] px-4 py-2 shadow-sm">
+                  {pricingDetails.monthlyPrice}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-3">
+                {pricingDetails.items.map((item) => (
+                  <div
+                    key={item}
+                    className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/80 px-4 py-3 text-sm text-[color:var(--hg-forest)]/80 shadow-sm"
+                  >
+                    <LeafIcon className="mt-0.5 h-5 w-5 text-[color:var(--hg-olive)]" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="rounded-[24px] border border-[color:var(--hg-clay)]/50 bg-[color:var(--hg-clay)]/25 p-5 text-[color:var(--hg-forest)] shadow-inner flex flex-col text-center gap-4">
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[color:var(--hg-clay)] mt-1 self-center">
+                  {pricingDetails.offerTitle}
+                </p>
+                <div className="flex flex-col items-center justify-center flex-1 gap-4">
+                  <ul className="space-y-2 text-sm">
+                  {pricingDetails.offerLines.map((line) => (
+                    <li key={line} className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[color:var(--hg-clay)]" />
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-xs text-[color:var(--hg-forest)]/70">
+                  Cotizaciones sin costo y visita inicial con descuento para
+                  evaluar tu jardín y necesidades de paisajismo.
+                </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
           id="contacto"
           className="mx-auto w-full max-w-6xl px-6 py-16 lg:px-10"
         >
@@ -388,23 +520,23 @@ function App() {
                 Contacto
               </p>
               <h2 className="mt-3 font-display text-3xl text-[color:var(--hg-forest)] sm:text-4xl">
-                Hablemos sobre tu jardin.
+                Hablemos sobre tu jardín.
               </h2>
               <p className="mt-4 text-sm text-[color:var(--hg-forest)]/70">
-                Cuentanos que necesitas y coordinemos una visita tecnica. Te
+                Cuéntanos qué necesitas y coordinemos una visita técnica. Te
                 responderemos con una propuesta clara y cercana.
               </p>
 
               <div className="mt-8 space-y-4">
                 <div className="rounded-2xl border border-white/80 bg-white/70 p-5 shadow-sm">
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hg-olive)]">
-                    Telefono
+                    Teléfono
                   </p>
                   <a
                     className="mt-2 block text-lg font-semibold text-[color:var(--hg-forest)]"
-                    href="tel:+56900000000"
+                    href="tel:+56965869763"
                   >
-                    +56 9 0000 0000
+                    +569 6586 9763
                   </a>
                 </div>
                 <div className="rounded-2xl border border-white/80 bg-white/70 p-5 shadow-sm">
@@ -420,7 +552,7 @@ function App() {
                 </div>
                 <div className="rounded-2xl border border-white/80 bg-white/70 p-5 shadow-sm">
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--hg-olive)]">
-                    Ubicacion
+                    Ubicación
                   </p>
                   <p className="mt-2 text-sm text-[color:var(--hg-forest)]/70">
                     Santiago y alrededores.
@@ -457,7 +589,7 @@ function App() {
 
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <label className="text-sm font-semibold text-[color:var(--hg-forest)]">
-                  Telefono
+                  Teléfono
                   <input
                     className="mt-2 w-full rounded-2xl border border-[color:var(--hg-clay)] bg-white/80 px-4 py-3 text-sm text-[color:var(--hg-forest)] shadow-sm outline-none transition focus:border-[color:var(--hg-olive)] focus:ring-2 focus:ring-[color:var(--hg-olive)]/30"
                     type="tel"
@@ -476,8 +608,8 @@ function App() {
                     <option value="" disabled>
                       Selecciona un servicio
                     </option>
-                    <option value="mantencion">Mantencion</option>
-                    <option value="diseno">Diseno y construccion</option>
+                    <option value="mantencion">Mantención</option>
+                    <option value="diseno">Diseño y construcción</option>
                     <option value="riego">Riego</option>
                     <option value="otros">Otros</option>
                   </select>
@@ -515,13 +647,16 @@ function App() {
 
       <footer className="border-t border-white/70 bg-white/60">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-6 py-6 text-sm text-[color:var(--hg-forest)]/70 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-          <p>HumusGarden 2024. Todos los derechos reservados.</p>
+          <p>HumusGarden 2026. Todos los derechos reservados.</p>
           <div className="flex items-center gap-6">
             <a className="transition hover:text-[color:var(--hg-olive)]" href="#inicio">
               Inicio
             </a>
             <a className="transition hover:text-[color:var(--hg-olive)]" href="#servicios">
               Servicios
+            </a>
+            <a className="transition hover:text-[color:var(--hg-olive)]" href="#precios">
+              Precios
             </a>
             <a className="transition hover:text-[color:var(--hg-olive)]" href="#contacto">
               Contacto
@@ -530,26 +665,6 @@ function App() {
         </div>
       </footer>
     </div>
-  )
-}
-
-function LeafMark({ className }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.4"
-    >
-      <path
-        d="M12 3c3 2 5 5.8 5 9.1 0 3.4-2.2 5.6-5 8-2.8-2.4-5-4.6-5-8C7 8.8 9 5 12 3Z"
-        fill="currentColor"
-        opacity="0.2"
-      />
-      <path d="M12 5c2.4 1.7 3.8 4.5 3.8 7.1 0 2.6-1.5 4.4-3.8 6.3-2.3-1.9-3.8-3.7-3.8-6.3C8.2 9.5 9.6 6.7 12 5Z" />
-      <path d="M12 6.5v10" />
-    </svg>
   )
 }
 
